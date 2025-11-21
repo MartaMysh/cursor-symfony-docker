@@ -4,7 +4,7 @@ services:
   php:
     build:
       context: docker/php
-    container_name: symfony_php
+    container_name: symfony_mk_php
     volumes:
       - ./app:/var/www/html:cached
       - ./docker/php/php.ini:/usr/local/etc/php/conf.d/custom.ini
@@ -16,7 +16,7 @@ services:
 
   nginx:
     image: nginx:stable
-    container_name: symfony_nginx
+    container_name: symfony_mk_nginx
     depends_on:
       - php
     ports:
@@ -27,7 +27,7 @@ services:
 
   db:
     image: postgres:15
-    container_name: symfony_db
+    container_name: symfony_mk_db
     environment:
       POSTGRES_DB: symfony
       POSTGRES_USER: symfony
@@ -39,7 +39,7 @@ services:
 
   adminer:
     image: adminer
-    container_name: symfony_adminer
+    container_name: symfony_mk_adminer
     restart: always
     ports:
       - "8080:8080"
