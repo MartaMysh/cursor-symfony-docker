@@ -1,6 +1,6 @@
 w głównym folderze uruchomić "make up"
 
-jeśli coś nie zadziała - poniżej mamy pojedyncze polecenie w tej kolejności, w której muszą być uruchomione:
+jeśli coś nie zadziała - poniżej mamy pojedyncze polecenia w tej kolejności, w której muszą być uruchomione:
 
 1. docker-compose up -d --build
 
