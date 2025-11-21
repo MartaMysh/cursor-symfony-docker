@@ -54,7 +54,6 @@ class FillUsersCommand extends Command
         $sheet = $spreadsheet->getActiveSheet();
         $rows = $sheet->toArray();
 
-        // Pomijamy nagłówki
         foreach (array_slice($rows, 1) as $row) {
 
             $id = $row[0];
@@ -63,7 +62,6 @@ class FillUsersCommand extends Command
             $login     = $row[3];
             $password  = $row[4];
 
-            // Sprawdzamy czy użytkownik istnieje
             $existing = $this->em->getRepository(User::class)->findOneBy([
                 'login' => $login
             ]);
@@ -84,7 +82,6 @@ class FillUsersCommand extends Command
             $user->setLogin($login);
             $user->setRoles(['ROLE_USER']);
 
-            // Hashowanie hasła
             $hashed = $this->passwordHasher->hashPassword($user, $password);
             $user->setPassword($hashed);
 

@@ -17,7 +17,9 @@
             </div>
 
             <button id="openModal" class="button-add">Dodaj nowy produkt</button>
-
+            <a href="{{ path('products_export') }}" class="btn-export">
+                Export to Excel
+            </a>
             <table border="1" cellpadding="5" cellspacing="0" id="productsTable">
                 <thead>
                 <tr>
@@ -45,7 +47,6 @@
                 </tbody>
             </table>
 
-            <!-- Modal -->
             <div id="myModal" class="modal">
                 <div class="modal-content">
                     <span class="close">&times;</span>
@@ -65,6 +66,8 @@
                 .button-add:hover { background-color:#45a049; }
                 .button-logout { padding:8px 12px; background-color:#f44336; color:white; text-decoration:none; border-radius:4px; }
                 .top-line {display: inline-block; width: 100%;}
+                .btn-export {padding: 8px 16px; background: #2563e0; color: white; border: none; border-radius: 6px; cursor: pointer; text-decoration: none; }
+                .btn-export:hover { background: #2563eb;}
             </style>
 
             <script>
@@ -74,7 +77,6 @@
                 const formContainer = document.getElementById('modalFormContainer');
 
                 openBtn.onclick = async () => {
-                    // pobieramy formularz z endpointa
                     const res = await fetch('{{ path("product_new") }}');
                     const html = await res.text();
                     formContainer.innerHTML = html;
@@ -83,7 +85,6 @@
                     const productSelect = formContainer.querySelector('#product_product');
                     const colorField = formContainer.querySelector('#color-field');
                     const colorInput = formContainer.querySelector('#product_color');
-
 
                     function toggleColorField() {
                         if (productSelect.value === 'Pen' || productSelect.value === '') {

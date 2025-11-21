@@ -4,12 +4,14 @@ namespace App\Controller;
 
 use App\Entity\Data;
 use App\Form\ProductType;
+use App\Service\ExcelExportService;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
 class ProductController extends AbstractController
@@ -44,14 +46,12 @@ class ProductController extends AbstractController
 
         $form->handleRequest($request);
 
-        // Jeśli formularz przesłany AJAX-em i poprawny
         if ($form->isSubmitted() && $form->isValid()) {
             $product->setUser($user);
             $product->setDate(new \DateTime());
             $em->persist($product);
             $em->flush();
 
-            // Zwracamy JSON z nowym produktem
             return $this->json([
                 'id' => $product->getId(),
                 'date' => $product->getDate() ? $product->getDate()->format('Y-m-d H:i') : '',
@@ -61,10 +61,32 @@ class ProductController extends AbstractController
             ]);
         }
 
-        // Jeśli nie AJAX, renderujemy sam formularz
         return $this->render('product/_form.html.twig', [
             'form' => $form->createView(),
         ]);
     }
 
+    #[Route('/products/export', name: 'products_export')]
+    public function export(EntityManagerInterface $em, ExcelExportService $excelExport): Response
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $products = $em->getRepository(Data::class)->findBy(['user' => $user]);
+
+        $spreadsheet = $excelExport->generateProductsExcel($products);
+        $writer = $excelExport->getWriter($spreadsheet);
+
+        $response = new StreamedResponse(function() use ($writer) {
+            $writer->save('php://output');
+        });
+
+        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        $response->headers->set('Content-Disposition', 'attachment; filename="products.xlsx"');
+        $response->headers->set('Cache-Control', 'max-age=0');
+
+        return $response;
+    }
 }

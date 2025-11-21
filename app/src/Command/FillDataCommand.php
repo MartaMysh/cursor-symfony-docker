@@ -4,7 +4,7 @@ namespace App\Command;
 
 use App\Entity\Data;
 use App\Entity\User;
-use DateTimeImmutable;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -68,7 +68,6 @@ class FillDataCommand extends Command
             $color = $row[4];
             $amount = (int)$row[5];
 
-            // Pobierz użytkownika po ID
             $user = $this->em->getRepository(User::class)->find($userId);
 
             if (!$user) {
@@ -83,7 +82,7 @@ class FillDataCommand extends Command
 
             $data = new Data();
             $data->setUser($user);
-            $data->setDate(new DateTimeImmutable($date));
+            $data->setDate(new DateTime($date));
             $data->setProduct($product);
             $data->setColor($color);
             $data->setAmount($amount);
