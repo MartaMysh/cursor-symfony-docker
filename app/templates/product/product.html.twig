@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        {% block stylesheets %}
+        {% endblock %}
+
+        {% block javascripts %}
+        {% endblock %}
+    </head>
+    <body>
+        {% block body %}
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h1>Moje produkty</h1>
+                <a href="{{ path('app_logout') }}" class="button-logout">Wyloguj</a>
+            </div>
+
+            <button id="openModal" class="button-add">Dodaj nowy produkt</button>
+
+            <table border="1" cellpadding="5" cellspacing="0" id="productsTable">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Data</th>
+                    <th>Amount</th>
+                    <th>Color</th>
+                    <th>Product</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for product in products %}
+                    <tr>
+                        <td>{{ product.id }}</td>
+                        <td>{{ product.date ? product.date|date('Y-m-d H:i') : '' }}</td>
+                        <td>{{ product.amount }}</td>
+                        <td>{{ product.color ?? '' }}</td>
+                        <td>{{ product.product }}</td>
+                    </tr>
+                {% else %}
+                    <tr id="noProductsRow">
+                        <td colspan="5" style="text-align:center;">Brak przypisanych produktów</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- Modal -->
+            <div id="myModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2>Dodaj nowy produkt</h2>
+                    <div id="modalFormContainer">
+                    </div>
+                </div>
+            </div>
+
+            <style>
+                /* style modal + buttony - jak wcześniej */
+                .modal { display:none; position: fixed; z-index: 100; left:0; top:0; width:100%; height:100%; overflow:auto; background-color: rgba(0,0,0,0.4); }
+                .modal-content { background-color:#fefefe; margin:10% auto; padding:20px; border:1px solid #888; width:400px; border-radius:8px; }
+                .close { color:#aaa; float:right; font-size:24px; font-weight:bold; cursor:pointer; }
+                .close:hover { color:black; }
+                .button-add { padding:8px 12px; background-color:#4CAF50; color:white; border:none; border-radius:4px; cursor:pointer; margin-bottom: 10px;}
+                .button-add:hover { background-color:#45a049; }
+                .button-logout { padding:8px 12px; background-color:#f44336; color:white; text-decoration:none; border-radius:4px; }
+                .top-line {display: inline-block; width: 100%;}
+            </style>
+
+            <script>
+                const modal = document.getElementById('myModal');
+                const openBtn = document.getElementById('openModal');
+                const closeBtn = modal.querySelector('.close');
+                const formContainer = document.getElementById('modalFormContainer');
+
+                openBtn.onclick = async () => {
+                    // pobieramy formularz z endpointa
+                    const res = await fetch('{{ path("product_new") }}');
+                    const html = await res.text();
+                    formContainer.innerHTML = html;
+                    modal.style.display = 'block';
+
+                    const productSelect = formContainer.querySelector('#product_product');
+                    const colorField = formContainer.querySelector('#color-field');
+                    const colorInput = formContainer.querySelector('#product_color');
+
+
+                    function toggleColorField() {
+                        if (productSelect.value === 'Pen' || productSelect.value === '') {
+                            colorField.style.display = 'block';
+                            colorInput.required = true;
+                        } else {
+                            colorField.style.display = 'none';
+                            colorInput.value = '';
+                            colorInput.required = false;
+                        }
+                    }
+
+                    productSelect.addEventListener('change', toggleColorField);
+                    toggleColorField();
+
+                    const form = formContainer.querySelector('form');
+                    form.addEventListener('submit', async (e) => {
+                        e.preventDefault();
+                        const data = new FormData(form);
+                        const response = await fetch('{{ path("product_new") }}', {
+                            method: 'POST',
+                            body: data
+                        });
+                        if (response.ok) {
+                            const newProduct = await response.json();
+                            const table = document.getElementById('productsTable').querySelector('tbody');
+                            const noRow = document.getElementById('noProductsRow');
+                            if(noRow) noRow.remove();
+
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = `<td>${newProduct.id}</td>
+                            <td>${newProduct.date}</td>
+                            <td>${newProduct.amount}</td>
+                            <td>${newProduct.color ?? ''}</td>
+                            <td>${newProduct.product}</td>`;
+                            table.appendChild(tr);
+                            modal.style.display = 'none';
+                        } else {
+                            alert('Błąd przy zapisie produktu');
+                        }
+                    });
+                };
+
+                closeBtn.onclick = () => modal.style.display = 'none';
+                window.onclick = (event) => { if(event.target==modal) modal.style.display='none'; };
+            </script>
+        {% endblock %}
+    </body>
+</html>

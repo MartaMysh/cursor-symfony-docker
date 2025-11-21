@@ -1,0 +1,119 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Logowanie{% endblock %}
+
+{% block body %}
+    <style>
+        body {
+            background: linear-gradient(135deg, #96c7ff, #e8efff);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(18px);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.15);
+            animation: fadeIn 0.8s ease forwards;
+            max-width: 400px;
+            margin: auto;
+        }
+        .login-card-line {
+            width: 100%;
+            max-width: 100%;
+            padding: 10px 0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .input-field {
+            border: 1px solid #d1d5db;
+            border-radius: 12px;
+            padding: 12px 12px 12px 12px;
+            width: 93%;
+            max-width: 100%;
+            transition: 0.2s;
+            background: rgba(255, 255, 255, 0.85);
+            margin-top: 5px;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 3px rgba(96,165,250,0.4);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 12px 0;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.25);
+        }
+
+        .decor-title {
+            font-size: 26px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #1e3a8a, #2563eb, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+
+    <div class="min-h-screen flex items-center justify-center px-4">
+        <div class="login-card">
+
+            <h1 class="decor-title">Zaloguj się</h1>
+
+            {% if error %}
+                <div class="mb-4 p-3 rounded-xl text-sm"
+                     style="background: rgba(255,0,0,0.1); color: #b91c1c;">
+                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                </div>
+            {% endif %}
+
+            <form method="post">
+                {% if app.user %}
+                    <div class="mb-4 p-3 rounded-xl text-sm"
+                         style="background: rgba(59,130,246,0.15); color: #1d4ed8;">
+                        Jesteś zalogowany jako <strong>{{ app.user.login }}</strong>.
+                        <a href="{{ path('app_logout') }}" style="text-decoration: underline;">
+                            Wyloguj się
+                        </a>
+                    </div>
+                {% else %}
+                <div class="login-card-line">
+                    <label class="block text-sm font-medium">Email</label>
+                    <input type="text" id="username" name="_username" value="{{ last_username }}"
+                           class="input-field mb-4" autocomplete="email" required autofocus>
+                </div>
+                <div class="login-card-line">
+                    <label class="block text-sm font-medium">Hasło</label>
+                    <input type="password" id="password" name="_password"
+                           class="input-field mb-6" autocomplete="current-password" required>
+                </div>
+                <button class="btn-primary">
+                    Zaloguj się
+                </button>
+
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                {% endif %}
+            </form>
+        </div>
+    </div>
+{% endblock %}

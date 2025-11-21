@@ -1,0 +1,74 @@
+<div class="form-container">
+    {{ form_start(form, {'attr': {'id': 'productForm'}}) }}
+    {{ form_row(form.product) }}
+    <div id="color-field">
+        {{ form_row(form.color) }}
+    </div>
+    {{ form_row(form.amount) }}
+    <button type="submit" class="btn-submit">Zapisz</button>
+    {{ form_end(form) }}
+</div>
+
+<style>
+    .form-container {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        max-width: 400px;
+        margin: 0 auto;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .form-container label {
+        font-weight: 600;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    .form-container input,
+    .form-container select,
+    .form-container textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: border 0.3s, box-shadow 0.3s;
+    }
+
+    .form-container input:focus,
+    .form-container select:focus,
+    .form-container textarea:focus {
+        border-color: #4CAF50;
+        box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+        outline: none;
+    }
+
+    .btn-submit {
+        padding: 10px 15px;
+        background-color: #4CAF50;
+        color: white;
+        font-weight: bold;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .btn-submit:hover {
+        background-color: #45a049;
+    }
+    #product_amount {
+        width: 93%;
+    }
+    #color-field {
+        display: block;
+        margin: 10px 0;
+    }
+    select, input {
+        margin-bottom: 10px;
+    }
+</style>
