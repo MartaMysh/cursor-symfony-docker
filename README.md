@@ -1,16 +1,35 @@
-w głównym folderze uruchomić "make up"
+Uruchomienie środowiska
 
-jeśli coś nie zadziała - poniżej mamy pojedyncze polecenia w tej kolejności, w której muszą być uruchomione:
+W głównym katalogu projektu dostępny jest Makefile, który automatyzuje pełną procedurę startową aplikacji.
 
-1. docker-compose up -d --build
+Aby uruchomić środowisko oraz wykonać wszystkie niezbędne kroki inicjalizacyjne, użyj polecenia:
 
-2. docker-compose exec php composer install
+make up
 
-3. docker-compose exec php php bin/console doctrine:migrations:migrate
+Polecenie to:
 
-4. docker-compose exec php php bin/console app:fill-users src/DataFixtures/users.xlsx
+buduje i uruchamia kontenery Dockera,
 
-5. docker-compose exec php php bin/console app:fill-data src/DataFixtures/data.xlsx
+instaluje zależności aplikacji,
 
+wykonuje migracje bazy danych,
 
-Go http://localhost:8000
+uzupełnia tabelę użytkowników danymi z pliku users.xlsx,
+
+importuje dane produktów z pliku data.xlsx.
+
+Alternatywna procedura krok po kroku
+
+Jeżeli wykonanie make up zakończy się niepowodzeniem lub konieczne jest ręczne uruchomienie poszczególnych etapów, poniżej znajduje się pełna sekwencja poleceń, które należy wykonać w podanej kolejności:
+
+docker-compose up -d --build
+
+docker-compose exec php composer install
+
+docker-compose exec php php bin/console doctrine:migrations:migrate
+
+docker-compose exec php php bin/console app:fill-users src/DataFixtures/users.xlsx
+
+docker-compose exec php php bin/console app:fill-data src/DataFixtures/data.xlsx
+
+Każde polecenie powinno zakończyć się sukcesem przed przejściem do kolejnego kroku.
