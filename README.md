@@ -1,3 +1,28 @@
+Konfiguracja środowiska
+
+Plik .env:
+
+    APP_ENV=dev – aplikacja działa w trybie deweloperskim (włączone logowanie, debug).
+
+    APP_SECRET – klucz używany przez Symfony do generowania tokenów i zabezpieczeń; w środowisku produkcyjnym należy ustawić silny, losowy ciąg znaków.
+
+    DEFAULT_URI=http://localhost – podstawowy adres aplikacji.
+
+    DATABASE_URL – konfiguracja połączenia z bazą danych PostgreSQL:
+    postgresql://symfony:symfonypass@db:5432/symfony?serverVersion=15&charset=utf8
+
+użytkownik: symfony
+
+hasło: symfonypass
+
+host: db (nazwa serwisu w docker-compose)
+
+port: 5432 (wewnątrz sieci Docker)
+
+baza: symfony
+
+
+
 <span style="font-size: 24px;">Uruchomienie środowiska</span>
 
 W głównym katalogu projektu dostępny jest Makefile, który automatyzuje pełną procedurę startową aplikacji.
@@ -36,3 +61,21 @@ docker-compose exec php php bin/console app:fill-users src/DataFixtures/users.xl
 docker-compose exec php php bin/console app:fill-data src/DataFixtures/data.xlsx
 ```
 Każde polecenie powinno zakończyć się sukcesem przed przejściem do kolejnego kroku.
+
+Dostęp do aplikacji
+
+    Frontend (nginx): http://localhost:8000
+
+    Adminer (GUI do bazy): http://localhost:8080
+
+    Baza danych (Postgres):
+
+        Host: localhost
+
+        Port: 5434
+
+        Użytkownik: symfony
+
+        Hasło: symfonypass
+
+        Baza: symfony
